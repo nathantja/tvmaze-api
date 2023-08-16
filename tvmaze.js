@@ -1,9 +1,9 @@
 "use strict";
 
+const $searchForm = $("#searchForm");
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
-const $searchForm = $("#searchForm");
-
+const $episodesList = $("#episodesList")
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -57,7 +57,6 @@ function displayShows(shows) {
 /** Handle search form submission: get shows from API and display.
  *    Hide episodes area (that only gets shown if they ask for episodes)
  */
-
 async function searchShowsAndDisplay() {
   const term = $("#searchForm-term").val();
   const shows = await getShowsByTerm(term);
@@ -75,11 +74,30 @@ $searchForm.on("submit", async function handleSearchForm(evt) {
 /** Given a show ID, get from API and return (promise) array of episodes:
  *      { id, name, season, number }
  */
+async function getEpisodesOfShow(id) {
 
-// async function getEpisodesOfShow(id) { }
+  const response = await fetch(`http://api.tvmaze.com/shows/${id}/episodes`);
 
-/** Write a clear docstring for this function... */
+  const episodeData = await response.json();
+  debugger;
+  return episodeData;
+}
 
-// function displayEpisodes(episodes) { }
+/** Given episodes of a show, create markup for each and append to DOM.
+ * */
+function displayEpisodes(episodes) {
+
+
+}
+
+// at some point:
+// $episodesList.empty();
+// $episodesArea.css("display","flex");
+
+
+//async function getEpisodesAndDisplay() {}
+//button on click, get back show ID and run handler function
+
+
 
 // add other functions that will be useful / match our structure & design
