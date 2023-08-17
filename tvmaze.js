@@ -1,5 +1,7 @@
 "use strict";
 
+const MISSING_IMAGE_URL = "https://tinyurl.com/tv-missing";
+
 const $searchForm = $("#searchForm");
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
@@ -16,23 +18,33 @@ const $episodesList = $("#episodesList");
 async function getShowsByTerm(searchTerm) {
   const q = searchTerm;
   const params = new URLSearchParams({ q });
-  const trimmedShows = [];
+
 
   const response = await fetch(`http://api.tvmaze.com/search/shows?${params}`);
   const searchData = await response.json();
 
-  for (const index of searchData) {
-    let { id, name, summary, image } = index.show;
-    if (image === null) {
-      image = { medium: "https://tinyurl.com/tv-missing" };
+  return searchData.map(object => {
+    const show = object.show;
+    return {
+      id: show.id,
+      name: show.name,
+      summary: show.summary,
+      image: show.image ? show.image.medium : MISSING_IMAGE_URL
     }
-    const trimmedShow = { id, name, summary, image };
-    trimmedShows.push(trimmedShow);
-  }
+  })
+  };
 
-  return trimmedShows;
-
-}
+  // OLD METHOD
+  // const trimmedShows = [];
+  // for (const index of searchData) {
+  //   let { id, name, summary, image } = index.show;
+  //   if (image === null) {
+  //     image = { medium: "https://tinyurl.com/tv-missing" };
+  //   }
+  //   const trimmedShow = { id, name, summary, image };
+  //   trimmedShows.push(trimmedShow);
+  // return trimmedShows;
+  // }
 
 
 /** Given list of shows, create markup for each and append to DOM.
@@ -47,7 +59,7 @@ function displayShows(shows) {
         <div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
-              src=${show.image.medium}
+              src=${show.image}
               alt=${show.name}
               class="w-25 me-3">
            <div class="media-body">
@@ -92,34 +104,45 @@ $searchForm.on("submit", function handleSearchForm(evt) {
 /** Given a show ID, get from API and return (promise) array of episodes:
  *      { id, name, season, number }
  */
+//TODO: Could use map method instead of manually looping
 async function getEpisodesOfShow(id) {
-  const episodeList = [];
 
   const response = await fetch(`http://api.tvmaze.com/shows/${id}/episodes`);
   const episodeData = await response.json();
 
-  for (const index of episodeData) {
-    const { id, name, season, number } = index;
-    const trimmedEp = { id, name, season, number };
-    episodeList.push(trimmedEp);
-  }
-
-  return episodeList;
+  return episodeData.map(object => {
+    return {
+      id: object.id,
+      name: object.name,
+      season: object.season,
+      number: object.number
+    }
+  })
+  // OLD METHOD
+  // const episodeList = [];
+  // for (const index of episodeData) {
+  //   const { id, name, season, number } = index;
+  //   const trimmedEp = { id, name, season, number };
+  //   episodeList.push(trimmedEp);
+  // }
+  // return episodeList;
 }
 
 
 /** Given episodes of a show, create markup for each and append to DOM. */
 function displayEpisodes(episodes) {
   $episodesList.empty();
+
   for (const ep of episodes) {
     const { name, season, number } = ep;
     $episodesList.append(`<li>${name} (season ${season}, number ${number})</li>`);
   }
+
   $episodesArea.show();
 }
 
 
-/** Given a show ID, get episodes and display them to the D */
+/** Given a show ID, get episodes and display them to the DOM */
 async function getEpisodesAndDisplay(showId) {
   const episodes = await getEpisodesOfShow(showId);
 
@@ -129,7 +152,8 @@ async function getEpisodesAndDisplay(showId) {
 
 /** Click listener for the button. Selects parent with class Show to determine
  * show ID. Gets the episodes and displays them to the DOM. */
-$showsList.on("click", "button", function handleButton(evt) {
+//FIXED TO-DO: button can be more specific if the app has more buttons
+$showsList.on("click", ".Show-getEpisodes", function handleButton(evt) {
   const showId = $(evt.target).closest('.Show').attr("data-show-id");
 
   getEpisodesAndDisplay(showId);
