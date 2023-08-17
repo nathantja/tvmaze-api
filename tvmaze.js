@@ -77,7 +77,8 @@ async function searchShowsAndDisplay() {
   displayShows(shows);
 }
 
-/** EventListener for form submit. Prevent page refresh, search and show
+
+/** EventListener for search form submit. Prevent page refresh, search and show
 displays, and clear the form input.
  *
  */
@@ -106,8 +107,8 @@ async function getEpisodesOfShow(id) {
   return episodeList;
 }
 
-/** Given episodes of a show, create markup for each and append to DOM.
- * */
+
+/** Given episodes of a show, create markup for each and append to DOM. */
 function displayEpisodes(episodes) {
   $episodesList.empty();
   for (const ep of episodes) {
@@ -117,6 +118,7 @@ function displayEpisodes(episodes) {
   $episodesArea.show();
 }
 
+
 /** Given a show ID, get episodes and display them to the D */
 async function getEpisodesAndDisplay(showId) {
   const episodes = await getEpisodesOfShow(showId);
@@ -124,10 +126,9 @@ async function getEpisodesAndDisplay(showId) {
   displayEpisodes(episodes);
 }
 
-/**
- * Click listener for the button. Selects parent with class Show to determine
- * show ID. Gets the episodes and displays them to the DOM.
- */
+
+/** Click listener for the button. Selects parent with class Show to determine
+ * show ID. Gets the episodes and displays them to the DOM. */
 $showsList.on("click", "button", function handleButton(evt) {
   const showId = $(evt.target).closest('.Show').attr("data-show-id");
 
