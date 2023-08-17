@@ -14,7 +14,7 @@ const $episodesList = $("#episodesList");
  *    (if no image URL given by API, put in a default image URL)
  */
 //TODO: Research optional chaining operator ?. tentatively look if a property exists
-//TODO: Could use map method instead of manually looping
+//FIXED-TO-DO: Could use map method instead of manually looping
 async function getShowsByTerm(searchTerm) {
   const q = searchTerm;
   const params = new URLSearchParams({ q });
@@ -104,7 +104,7 @@ $searchForm.on("submit", function handleSearchForm(evt) {
 /** Given a show ID, get from API and return (promise) array of episodes:
  *      { id, name, season, number }
  */
-//TODO: Could use map method instead of manually looping
+//FIXED-TO-DO: Could use map method instead of manually looping
 async function getEpisodesOfShow(id) {
 
   const response = await fetch(`http://api.tvmaze.com/shows/${id}/episodes`);
